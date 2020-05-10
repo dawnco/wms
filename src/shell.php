@@ -16,6 +16,7 @@ if (!defined('WMS_PATH')) {
     define('WMS_PATH', __DIR__);
 }
 
+include WMS_PATH . "/fw/fn.php";
 include WMS_PATH . "/fw/Fw.php";
 
 $fw = new \wms\fw\Fw();

@@ -6,5 +6,6 @@
 
 return [
     // 'url 可用正则' => ['c' => '控制器', 'm' => '方法'];
-    '.*'       => ['c' => 'app\\control\Portal', 'm' => 'index'],
+    "portal"  => ["c" => "app\\control\\Portal", "m" => "index"],
+    "test/(.*)" => ["c" => "app\\control\\Portal", "m" => "test"],
 ];

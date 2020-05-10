@@ -14,8 +14,12 @@ class Portal
 
     public function index()
     {
-        echo "hello";
         $db   = Db::instance();
         $data = $db->getData("show tables");
+    }
+
+    public function test($param)
+    {
+        var_dump($param);
     }
 }

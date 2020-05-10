@@ -75,8 +75,10 @@ class Route
             $uri = "portal";
         }
 
-        $this->uri = $uri;
+        $uri = trim($uri, "/");
 
+        $this->uri = $uri;
+        return $uri;
     }
 
     private function param($rule, $matches = [])
