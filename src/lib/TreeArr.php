@@ -15,10 +15,10 @@ namespace wms\lib;
  *  [一级类名, 二级类名, 三级类名]
  *  [一级类名, 二级类名, 三级类名]
  * ],
- * 转为 id pid 存入数据库
+ * 转为 id pid  二维数组格式
  * Class Arr2Tree
  */
-class ArrTree
+class TreeArr
 {
     protected $id = 1;
 

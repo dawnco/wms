@@ -24,4 +24,4 @@ $fw->shell();
 
 $db = \wms\fw\Db::instance();
 
-(new \wms\lib\ArrTree())->demo();
+(new \wms\lib\TreeArr())->demo();
