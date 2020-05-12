@@ -22,3 +22,6 @@ include WMS_PATH . "/fw/Fw.php";
 $fw = new \wms\fw\Fw();
 $fw->shell();
 
+$db = \wms\fw\Db::instance();
+
+(new \wms\lib\ArrTree())->demo();

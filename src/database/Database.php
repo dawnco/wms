@@ -52,6 +52,8 @@ class Database
      */
     public function prepare($sql, $data = null)
     {
+
+
         if ($data === null) {
             return $sql;
         } elseif (!is_array($data)) {
@@ -66,7 +68,8 @@ class Database
         foreach ($data as $k => $v) {
             $data[$k] = $this->escape($v);
         }
-        return vsprintf($query, $data);
+
+        return vsprintf($sql, $data);
     }
 
 }

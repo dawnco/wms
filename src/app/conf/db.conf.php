@@ -11,7 +11,7 @@ return [
         "hostname" => "127.0.0.1",
         "username" => "root",
         "password" => "root",
-        "database" => "basic",
+        "database" => "laravel_admin",
         "port"     => 3306,
         "charset"  => "UTF8",
     ),
