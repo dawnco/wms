@@ -15,5 +15,14 @@ return [
         "port"     => 3306,
         "charset"  => "UTF8",
     ),
+    //"dfhl"    => array(
+    //    "driver"   => \wms\database\Mysqli::class,
+    //    "hostname" => "8.129.34.119",
+    //    "username" => "backend",
+    //    "password" => "@vLvXFqdUo#rCB#hkHT5IgkA",
+    //    "database" => "loan_market_v2",
+    //    "port"     => 3306,
+    //    "charset"  => "UTF8",
+    //)
 ];
 

@@ -20,7 +20,7 @@ namespace wms\lib;
  */
 class TreeArr
 {
-    protected $id = 1;
+    protected $id = 100;
 
     /**
      * 处理后的数据 格式

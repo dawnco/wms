@@ -24,4 +24,37 @@ $fw->shell();
 
 $db = \wms\fw\Db::instance();
 
-(new \wms\lib\TreeArr())->demo();
+$data = $db->getData("SELECT sheng,shi,qu,concat(cun, '|||',postcode) cun FROM addr");
+
+$cls = new \wms\lib\TreeArr();
+$arr = $cls->handle($data);
+
+$batch = [];
+foreach ($arr as $key => $v) {
+    $name     = explode("|||", $v['name']);
+    $postcode = $name[1] ?? "";
+    $typeA    = [0 => "province", 1 => 'city', 2 => 'district', 3 => 'village'];
+
+    $type = $typeA[substr_count($key, "^")];
+
+    $batch[] = [
+        "id"       => $v['id'],
+        "pid"      => $v['pid'],
+        "name"     => $name[0],
+        "type"     => $type,
+        "language" => "id",
+        "postcode" => $postcode,
+        //"n"        => $v['name'],
+    ];
+}
+
+$a     = array_chunk($batch, 10000);
+$index = 0;
+$dbR = \wms\fw\Db::instance('dfhl');
+foreach ($a as $b) {
+    echo $index++;
+    echo "\r\n";
+    $dbR->insertBatch("sys_region", $b);
+}
+
+//var_dump(array_slice($batch, 0, 10));
