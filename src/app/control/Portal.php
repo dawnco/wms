@@ -16,6 +16,7 @@ class Portal
     {
         $db   = Db::instance();
         $data = $db->getData("show tables");
+        var_dump($data);
     }
 
     public function test($param)
