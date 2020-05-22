@@ -16,15 +16,15 @@ class Database
      * 根据条件拼接sql where片段
      * 主要解决前台可选一项或多项条件进行查询时的sql拼接
      * 拼接规则：
-     * 's'=>sql，必须，sql片段
-     * 'v'=>值缩写，必须，sql片段中要填充的值
-     * 'c'=>条件，选填，默认判断不为空，如果设置了条件则用所设置的条件
-     * $factor_list = array(
-     *        array('s'=>'and a.id=?i', 'v'=>12 ),
-     *        array('s'=>"and a.name like '%?p'", 'v'=>'xin'),
-     *        array('s'=>'and a.age > ?i', 'v'=>18),
-     *        array('s'=>'or (a.time > ?s and a.time < ?s )', 'v'=>array('2014', '2015'), 'c'=>(1==1) )
-     * );
+     * 0 =>sql，必须，sql片段
+     * 1 =>值缩写，必须，sql片段中要填充的值
+     * 2 =>条件，选填，默认判断不为空，如果设置了条件则用所设置的条件
+     * $factor_list = [
+     *        ['and a.id=?i', 12 ],
+     *        ['and a.name like '%?p'", 'xin'],
+     *        ['and a.age > ?i', 18],
+     *        ['or (a.time > ?s and a.time < ?s )', ['2014', '2015'], 1==1 ]
+     * ];
      * @param array $factor_list
      * @return string
      */
@@ -32,9 +32,9 @@ class Database
     {
         $where_sql = ' 1=1';
         foreach ($factor_list as $factor) {
-            $condition = isset($factor['c']) ? $factor['c'] : $factor['v'];
+            $condition = $factor[2] ?? $factor[1];
             if ($condition) {
-                $where_sql .= " " . $this->prepare($factor['s'], $factor['v']);
+                $where_sql .= " " . $this->prepare($factor[0], [$factor[1]]);
             }
         }
         return $where_sql;
@@ -66,10 +66,29 @@ class Database
             $sql);
 
         foreach ($data as $k => $v) {
-            $data[$k] = $this->escape($v);
+            if (is_array($v)) {
+                $data[$k] = $this->valIn($v);
+            } else {
+                $data[$k] = $this->escape($v);
+            }
         }
 
         return vsprintf($sql, $data);
+    }
+
+
+    /**
+     * 转义 用于 sql in 查询
+     * @param        $array
+     * @param string $type
+     * @return string
+     */
+    protected function valIn($array)
+    {
+        foreach ($array as $k => $v) {
+            $array[$k] = $this->escape($v);
+        }
+        return implode('","', $array);
     }
 
 }

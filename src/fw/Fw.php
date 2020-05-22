@@ -51,7 +51,6 @@ class Fw
         $control = $this->route->getControl();
         $method  = $this->route->getMethod();
         $param   = $this->route->getParam();
-
         if (!class_exists($control)) {
             throw new Exception($control . " File Not Found");
         }

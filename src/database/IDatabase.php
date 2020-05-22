@@ -140,5 +140,4 @@ interface IDatabase
      * 回滚
      */
     public function rollback();
-
 }

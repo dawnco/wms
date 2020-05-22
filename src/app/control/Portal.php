@@ -7,6 +7,7 @@
 namespace app\control;
 
 
+use common\model\Model;
 use wms\fw\Db;
 
 class Portal
@@ -16,7 +17,18 @@ class Portal
     {
         $db   = Db::instance();
         $data = $db->getData("show tables");
-        var_dump($data);
+        $data = $db->getData("SELECT * FROM brands WHERE id IN (?)", [['abc', 2, 3]]);
+        $data = $db->getData("SELECT * FROM brands WHERE id IN (?)", [['abc', 2, 3]]);
+        $data = $db->getData("SELECT * FROM brands WHERE id IN (?)", [['abc', 2, 3]]);
+
+        $m  = Model::instance('brands');
+        $d  = $m->delete(526, ['name' => '1212']);
+        $id = $m->create(['name' => 'n1']);
+        //$m->update($id, ['name' => 'n2']);
+        $m->delete($id, ['name' => 'n1']);
+        //$m->restore($id, ['name' => 'n1']);
+        $m->all();
+        var_dump($db->sql);
     }
 
     public function test($param)
