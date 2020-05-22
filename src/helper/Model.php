@@ -4,7 +4,7 @@
  * @date   2020-05-22
  */
 
-namespace common\model;
+namespace helper;
 
 
 use wms\fw\Db;
