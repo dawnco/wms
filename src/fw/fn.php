@@ -12,7 +12,7 @@
 function input($key, $val_type = "s")
 {
     $val = isset($_POST[$key]) ? $_POST[$key] :
-        (isset($_GET[$key]) ? $_GET[$key] : false);
+        (isset($_GET[$key]) ? $_GET[$key] : null);
 
 
     switch ($val_type) {
@@ -22,7 +22,7 @@ function input($key, $val_type = "s")
         case "a" :
             $val = $val ? (array)$val : array();
         break;
-        default :
+        case 's':
             $val = (string)$val;
             $val = trim($val);
         break;
