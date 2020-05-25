@@ -6,7 +6,7 @@
 
 namespace app\control;
 
-use helper\Model;
+use app\model\Model;
 use wms\fw\Db;
 
 class Portal

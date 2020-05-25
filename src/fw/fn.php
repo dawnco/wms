@@ -69,3 +69,10 @@ function get_client_ip()
     preg_match("/[\d\.]{7,15}/", $realip, $realip);
     return !empty($realip[0]) ? $realip[0] : '0.0.0.0';
 }
+
+
+function dump(...$args)
+{
+    var_dump($args);
+    exit;
+}

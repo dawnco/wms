@@ -8,6 +8,7 @@ namespace wms\fw;
 
 
 use wms\database\IDatabase;
+use wms\database\Mysqli;
 
 class Db
 {
@@ -16,7 +17,7 @@ class Db
 
     /**
      * @param $conf
-     * @return IDatabase
+     * @return Mysqli
      */
     public static function instance($conf = 'default')
     {

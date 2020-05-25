@@ -73,21 +73,17 @@ class Mysqli extends Database implements IDatabase
         return $this->getLine($this->prepare($query, array($value)));
     }
 
-    public function getLineByWhere($table, $where, $field = "*")
+    public function getLineByWhere($table, $where, $field = "*", $order = 'id DESC')
     {
+        $rows = $this->getDataByWhere($table, $where, $field = "*", $order, "LIMIT 1");
+        return $rows ? $rows[0] : false;
+    }
 
-        $_where = [];
-
-        foreach ($where as $k => $v) {
-            $_where[] = [
-                "s" => "AND `$k` = ?s",
-                "v" => $v,
-            ];
-        }
-
-        $where_sql = $this->where($_where);
-        $query     = "SELECT $field FROM `$table` WHERE $where_sql LIMIT 1";
-        return $this->getLine($query);
+    public function getDataByWhere($table, $where, $field = "*", $order = 'id DESC', $limit = '')
+    {
+        $where_sql = $this->where($where);
+        $query     = "SELECT $field FROM `$table` WHERE $where_sql ORDER BY $order $limit";
+        return $this->getData($query);
     }
 
     /**
@@ -333,7 +329,7 @@ class Mysqli extends Database implements IDatabase
         $start  = microtime(true);
         $result = $this->link->query($query);
         if ($result === false) {
-            $error         = sprintf("%s : %s [%s]", $this->link->errno, $this->link->error, $query);
+            $error = sprintf("%s : %s [%s]", $this->link->errno, $this->link->error, $query);
             throw new Exception($error);
         }
         $end         = microtime(true);
@@ -407,4 +403,8 @@ class Mysqli extends Database implements IDatabase
         return $result;
     }
 
+    public function debug()
+    {
+        var_dump($this->sql);
+    }
 }

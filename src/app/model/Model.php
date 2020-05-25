@@ -4,8 +4,7 @@
  * @date   2020-05-22
  */
 
-namespace helper;
-
+namespace app\model;
 
 use wms\fw\Db;
 
@@ -33,10 +32,12 @@ class Model
         $this->table = $table;
     }
 
-    public static function instance($table, $conf = 'default')
+    public static function instance($table = null, $conf = 'default')
     {
         $cls = new self($conf);
-        $cls->setTable($table);
+        if ($table) {
+            $cls->setTable($table);
+        }
         return $cls;
     }
 

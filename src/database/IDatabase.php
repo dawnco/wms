@@ -62,6 +62,8 @@ interface IDatabase
      */
     public function getLineByWhere($table, $where, $field = "*");
 
+    public function getDataByWhere($table, $where, $field = "*");
+
 
     /**
      * 插入

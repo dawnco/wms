@@ -21,7 +21,7 @@ class Database
      * 2 =>条件，选填，默认判断不为空，如果设置了条件则用所设置的条件
      * $factor_list = [
      *        ['and a.id=?i', 12 ],
-     *        ['and a.name like '%?p'", 'xin'],
+     *        ['and a.name like '%?p', 'xin'],
      *        ['and a.age > ?i', 18],
      *        ['or (a.time > ?s and a.time < ?s )', ['2014', '2015'], 1==1 ]
      * ];
@@ -57,7 +57,7 @@ class Database
         if ($data === null) {
             return $sql;
         } elseif (!is_array($data)) {
-            throw new Exception("except array data");
+            throw new Exception("except array data: $sql");
         }
 
         $sql = str_replace(
