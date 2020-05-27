@@ -7,10 +7,20 @@
 namespace wms\fw;
 
 
+use wms\lib\Response;
+
 class Fw
 {
+    public static $application = null;
+
     public $hook  = null;
     public $route = null;
+
+    public static function instance()
+    {
+        return self::$application = new self();
+    }
+
 
     public function __construct()
     {
@@ -61,7 +71,11 @@ class Fw
             throw new Exception($control . "->" . $method . "() Method Not Found");
         }
 
-        call_user_func_array(array($classInstance, $method), $param);
+        try {
+            Response::http(0, '', call_user_func_array(array($classInstance, $method), $param));
+        } catch (\Exception $e) {
+            Response::http($e->getCode(), $e->getMessage());
+        }
 
         $this->hook->handle('after_control');
 
