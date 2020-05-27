@@ -34,7 +34,7 @@ class Route
         $rules = Conf::get("route") ?? [];
         //是否配置过路由
         foreach ($rules as $u => $r) {
-            $matches = array();
+            $matches = [];
             if (preg_match("#^$u$#", $uri, $matches)) {
                 $params        = $this->param($r, $matches);
                 $this->control = $r['c'];
@@ -62,6 +62,8 @@ class Route
             $uri = "";
         }
 
+        $uri = trim($uri, "/");
+
         //去掉前缀
         $base_uri = trim(Conf::get("app.base_uri"), " /");
         if ($base_uri) {
@@ -85,7 +87,7 @@ class Route
     {
 
         $this->control = $rule['c'];
-        $this->method  = isset($rule['m']) ? $rule['m'] : $this->__method;
+        $this->method  = isset($rule['m']) ? $rule['m'] : 'index';
 
         $url_param = array_slice($matches, 1);
         //合并参数

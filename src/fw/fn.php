@@ -73,6 +73,13 @@ function get_client_ip()
 
 function dump(...$args)
 {
-    var_dump($args);
+
+    $args = func_get_args();
+    echo " \033[32;40m";
+    foreach ($args as $v) {
+        var_dump($v);
+    }
+    echo "\033[0m ";
     exit;
 }
+

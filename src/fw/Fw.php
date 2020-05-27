@@ -7,14 +7,25 @@
 namespace wms\fw;
 
 
-use wms\lib\Response;
-
 class Fw
 {
+    /**
+     * @var Fw
+     */
     public static $application = null;
 
     public $hook  = null;
     public $route = null;
+
+    /**
+     * @var Request
+     */
+    public $request = null;
+
+    /**
+     * @var Response
+     */
+    public $response = null;
 
     public static function instance()
     {
@@ -26,6 +37,10 @@ class Fw
     {
         $this->autoload();
         $this->loadConf();
+
+        $this->request  = new Request();
+        $this->response = new Response();
+
     }
 
     public function loadConf()
@@ -61,6 +76,7 @@ class Fw
         $control = $this->route->getControl();
         $method  = $this->route->getMethod();
         $param   = $this->route->getParam();
+
         if (!class_exists($control)) {
             throw new Exception($control . " File Not Found");
         }
@@ -72,9 +88,9 @@ class Fw
         }
 
         try {
-            Response::http(0, '', call_user_func_array(array($classInstance, $method), $param));
+            $this->response->http(0, null, call_user_func_array(array($classInstance, $method), $param));
         } catch (\Exception $e) {
-            Response::http($e->getCode(), $e->getMessage());
+            $this->response->http($e->getCode(), $e->getMessage());
         }
 
         $this->hook->handle('after_control');
