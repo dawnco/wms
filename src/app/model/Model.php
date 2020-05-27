@@ -13,9 +13,9 @@ class Model
     protected $table     = '';
     protected $sortField = 'sort_num';
 
-    protected $updatedAt = 'updated_at';
-    protected $createdAt = 'created_at';
-    protected $deletedAt = 'deleted_at';
+    protected $updatedAt = 'updated';
+    protected $createdAt = 'created';
+    protected $deletedAt = 'deleted';
 
     // 是否启用
     protected $enabledField = 'enabled';
@@ -98,4 +98,11 @@ class Model
         return $sql_where;
     }
 
+
+    public function setEnable($id)
+    {
+        $enable = $this->db->getVar("SELECT enabled FROM `{$this->table}` WHERE id = ?", [$id]);
+
+        $this->db->update($this->table, ['enabled' =>$enable == Enab ], ["id" => $id]);
+    }
 }
