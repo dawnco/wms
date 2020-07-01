@@ -34,7 +34,7 @@ class Route
         $rules = Conf::get("route") ?? [];
         //是否配置过路由
         foreach ($rules as $u => $r) {
-            $matches = array();
+            $matches = [];
             if (preg_match("#^$u$#", $uri, $matches)) {
                 $params        = $this->param($r, $matches);
                 $this->control = $r['c'];
@@ -42,7 +42,7 @@ class Route
                 return null;
             }
         }
-        throw new Exception("no route match : $uri");
+        throw new Exception("no route match");
     }
 
     private function parseUri()
@@ -50,21 +50,14 @@ class Route
 
         if (isset($_GET['route'])) {
             $uri = $_GET['route'];
-        } elseif (isset($_SERVER['PATH_INFO'])) {
-            $uri = $_SERVER['PATH_INFO'];
-        } elseif (isset($_SERVER['HTTP_REQUEST_URI'])) {
-            $uri = $_SERVER['HTTP_REQUEST_URI'];
         } elseif (isset($_SERVER['REQUEST_URI'])) {
-            $uri = $_SERVER['REQUEST_URI'];
-        } elseif (isset($_SERVER['REDIRECT_SCRIPT_URL'])) {
-            $uri = $_SERVER['REDIRECT_SCRIPT_URL'];
-        } elseif (isset($_SERVER['REDIRECT_URL'])) {
-            $uri = $_SERVER['REDIRECT_URL'];
+            $pos = strpos($_SERVER['REQUEST_URI'], "?");
+            $uri = $pos > 0 ? substr($_SERVER['REQUEST_URI'], 0, $pos) : $_SERVER['REQUEST_URI'];
         } else {
             $uri = "";
         }
 
-
+        $uri = trim($uri, "/");
         //去掉前缀
         $base_uri = trim(Conf::get("app.base_uri"), " /");
         if ($base_uri) {
