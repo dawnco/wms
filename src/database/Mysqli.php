@@ -88,8 +88,8 @@ class Mysqli extends Database implements IDatabase
 
     /**
      * 获取一个值
-     * @param type $query
-     * @param type $bind
+     * @param string $query
+     * @param mixed  $bind
      * @return type
      */
     public function getVar($query, $bind = null)
@@ -246,11 +246,8 @@ class Mysqli extends Database implements IDatabase
         $size  = abs($size) ?: 1;
         $start = abs(($page ?: 1) - 1) * $size;
 
-        $total_page = ceil($total / $size);
-
         $data['total'] = (int)$total;
         $data['page']  = (int)$page;
-        $data['ended'] = $total_page ? ($total_page == $page) : true;
 
         $entries = [];
 
@@ -263,7 +260,48 @@ class Mysqli extends Database implements IDatabase
             $result->free();
         }
 
-        $data['entries'] = $entries;
+        $data['data'] = $entries;
+
+        return $data;
+
+    }
+
+    /**
+     * 简单分页数据
+     * @param        $table
+     * @param        $join
+     * @param array  $where
+     * @param int    $page
+     * @param int    $size
+     * @param string $order
+     * @param string $fields
+     * @return array
+     * @author  Dawnc
+     */
+    public function getJoinPageData($table, $join = '', $where = [], $page = 1, $size = 10, $order = "id DESC", $fields = '*')
+    {
+
+        $sql_where = $this->where($where);
+        $total     = $this->getVar("SELECT count(a.id) FROM $table $join WHERE " . $sql_where);
+
+        $size  = abs($size) ?: 1;
+        $start = abs(($page ?: 1) - 1) * $size;
+
+        $data['total'] = (int)$total;
+        $data['page']  = (int)$page;
+
+        $entries = [];
+
+        $query  = "SELECT {$fields} FROM $table $join WHERE $sql_where ORDER BY $order LIMIT $start, $size";
+        $result = $this->exec($query, $this->link);
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $entries[] = $row;
+            }
+            $result->free();
+        }
+
+        $data['data'] = $entries;
 
         return $data;
 

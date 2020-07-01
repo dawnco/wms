@@ -12,7 +12,7 @@
 function input($key, $val_type = "s")
 {
     $val = isset($_POST[$key]) ? $_POST[$key] :
-        (isset($_GET[$key]) ? $_GET[$key] : null);
+        (isset($_GET[$key]) ? $_GET[$key] : false);
 
 
     switch ($val_type) {
@@ -22,7 +22,7 @@ function input($key, $val_type = "s")
         case "a" :
             $val = $val ? (array)$val : array();
         break;
-        case 's':
+        default :
             $val = (string)$val;
             $val = trim($val);
         break;
@@ -75,11 +75,15 @@ function dump(...$args)
 {
 
     $args = func_get_args();
-    echo " \033[32;40m";
+
+    if (IS_CLI) {
+        echo " \033[32;40m";
+    }
     foreach ($args as $v) {
         var_dump($v);
     }
-    echo "\033[0m ";
+    if (IS_CLI) {
+        echo "\033[0m ";
+    }
     exit;
 }
-

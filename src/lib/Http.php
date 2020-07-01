@@ -1,6 +1,6 @@
 <?php
 
-namespace wumashi\lib;
+namespace wms\lib;
 
 /**
  * @author  Dawnc
@@ -12,7 +12,7 @@ class Http {
     static $debug = [];
 
     /**
-     * 
+     *
      * @param type $url
      * @param type $data
      * @param array $opt curl set_opt参数
@@ -32,17 +32,17 @@ class Http {
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
-        
+
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);  
-        
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
         //ssl
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
         //curl_setopt($ch, CURLOPT_NOBODY, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //返回
-        
+
 
         if ($data) {
             curl_setopt($ch, CURLOPT_POST, true);
@@ -92,7 +92,7 @@ class Http {
     }
 
     /**
-     * 
+     *
      * @param type $des 保存路径
      * @param type $url
      */

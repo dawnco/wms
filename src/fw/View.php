@@ -78,7 +78,7 @@ class View
     {
         self::$data = array_merge(self::$data, $data);
 
-        $_file = APP_PATH . "view/$tpl.tpl.php";
+        $_file = APP_PATH . "/view/$tpl.tpl.php";
 
         if (self::$data) {
             extract(self::$data);

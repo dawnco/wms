@@ -1,5 +1,6 @@
 node_modules
 /vendor
+db.conf.php
 npm-debug.log
 yarn-error.log
 .idea

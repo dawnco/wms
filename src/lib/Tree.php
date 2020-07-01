@@ -1,6 +1,6 @@
 <?php
 
-namespace wumashi\lib;
+namespace wms\lib;
 
 /**
  * 树操作

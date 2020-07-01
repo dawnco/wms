@@ -9,7 +9,8 @@ namespace wms\fw;
 
 class Response
 {
-    public function http($code, $msg = null, $data = null)
+
+    public function json($code, $msg = null, $data = null)
     {
         $out['code'] = $code;
         if ($msg !== null) {
@@ -18,6 +19,13 @@ class Response
         if ($data !== null) {
             $out['data'] = $data;
         }
-        echo json_encode($out);
+        $out['debug'] = Db::instance()->sql;
+        return $out;
+    }
+
+    public function send($str)
+    {
+        header('content-type:application/json;charset=utf-8');
+        echo $str;
     }
 }
