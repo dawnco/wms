@@ -1,6 +1,6 @@
 {
-  "name": "dawnco/wms-fw",
-  "description": "wms sample php framework",
+  "name": "dawnco/wms",
+  "description": "wms 2.0 sample php framework",
   "authors": [
     {
       "name": "dawnco",
