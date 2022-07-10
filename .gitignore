@@ -1,7 +1,8 @@
 node_modules
-/vendor
-db.conf.php
-npm-debug.log
-yarn-error.log
 .idea
-db.conf.php
+app.conf.php
+.sass-cache
+runtime
+vendor
+composer.lock
+app.conf.php

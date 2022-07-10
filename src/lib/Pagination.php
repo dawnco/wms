@@ -1,8 +1,6 @@
 <?php
 
-namespace wumashi\lib;
-
-use wumashi\core\Registry;
+namespace Wms\Lib;
 
 /**
  * 分页类
@@ -12,28 +10,30 @@ use wumashi\core\Registry;
  * @version : 1.0
  * @Description
  */
-class Pagination {
+class Pagination
+{
 
     private $__total; //总记录数
     private $__totalPage; //总页数
     private $__size; //每页记录数
     private $__currentPage; //当前页码
-    private $__page         = 0; //指定的当前页
-    private $__pageTag      = "{page}"; //页面变量模板
-    private $__pageVar      = "page"; //page 参数变量
-    private $__showNum      = 10; //显示多少个页码
-    private $__pageUrl      = null; // 分页url 模板
+    private $__page = 0; //指定的当前页
+    private $__pageTag = "{page}"; //页面变量模板
+    private $__pageVar = "page"; //page 参数变量
+    private $__showNum = 10; //显示多少个页码
+    private $__pageUrl = null; // 分页url 模板
     private $__firstPageUrl = ""; //第一页地址
     private $__startNum;
     private $__endNum;
 
     /**
-     * @param type $option array("total" => 总记录数, "size"=>每页数目)
+     * @param array $option array("total" => 总记录数, "size"=>每页数目)
      */
-    public function __construct($option) {
+    public function __construct(array $option)
+    {
 
         foreach ($option as $key => $value) {
-            $val        = "__" . $key;
+            $val = "__" . $key;
             $this->$val = $value;
         }
 
@@ -63,7 +63,8 @@ class Pagination {
     /**
      * 获取分类URL
      */
-    private function __getPageUrl() {
+    private function __getPageUrl()
+    {
         if ($this->__pageUrl == null) {
             $uri = Registry::get("request")->getUri();
             $uri = $uri == "protal" ? "" : $uri;
@@ -80,7 +81,8 @@ class Pagination {
     /**
      * 计算偏移量
      */
-    private function __calcPageNum() {
+    private function __calcPageNum()
+    {
 
         //显示几个
         $length = ceil($this->__showNum / 2);
@@ -88,23 +90,23 @@ class Pagination {
         if ($this->__currentPage <= $length) {
             //前4页
             $this->__startNum = 1; //起始页
-            $this->__endNum   = $this->__showNum < $this->__totalPage ? $this->__showNum : $this->__totalPage;
+            $this->__endNum = $this->__showNum < $this->__totalPage ? $this->__showNum : $this->__totalPage;
         } elseif ($this->__currentPage >= $this->__totalPage - $length) {
             //最有4页
-            $this->__endNum   = $this->__totalPage;
-            $start            = $this->__endNum - $this->__showNum + 1;
+            $this->__endNum = $this->__totalPage;
+            $start = $this->__endNum - $this->__showNum + 1;
             $this->__startNum = $start > 1 ? $start : 1; //起始页
         } else {
             $start = $this->__currentPage - $length + 1;
-            $end   = $start + $this->__showNum - 1;
+            $end = $start + $this->__showNum - 1;
 
             if ($start == 0) {
                 $start = 1;
-                $end   = $this->__showNum;
+                $end = $this->__showNum;
             }
 
             $this->__startNum = $start; //起始页
-            $this->__endNum   = $end < $this->__totalPage ? $end : $this->__totalPage;
+            $this->__endNum = $end < $this->__totalPage ? $end : $this->__totalPage;
         }
 
     }
@@ -114,7 +116,8 @@ class Pagination {
      * @param type $number
      * @return type
      */
-    private function __url($number) {
+    private function __url($number)
+    {
 
         if ($number == 1 && $this->__firstPageUrl) {
             //自定义首页地址
@@ -128,7 +131,8 @@ class Pagination {
      * 产生分页html;
      * @return string
      */
-    public function html() {
+    public function html()
+    {
         $str = "";
         $str .= "<span>" . $this->__total . " 条记录 </span>";
         //只有一页
@@ -165,25 +169,28 @@ class Pagination {
      * mysql LIMIT 部分数据
      * @return type
      */
-    public function limit() {
+    public function limit()
+    {
         return " LIMIT " . (($this->__currentPage - 1) * $this->__size) . "," . $this->__size . " ";
     }
 
     /**
      * 总页数
-     * @author  Dawnc
      * @return float
+     * @author  Dawnc
      */
-    public function getTotalPage() {
+    public function getTotalPage()
+    {
         return $this->__totalPage;
     }
 
     /**
      * 当前页码
-     * @author  Dawnc
      * @return mixed
+     * @author  Dawnc
      */
-    public function getPage() {
+    public function getPage()
+    {
         return $this->__currentPage;
     }
 
@@ -191,7 +198,8 @@ class Pagination {
      * 最后一页
      * @author  Dawnc
      */
-    public function ended(){
+    public function ended()
+    {
         return $this->__currentPage == $this->__totalPage;
     }
 
@@ -199,7 +207,8 @@ class Pagination {
      * 每页大小
      * @author  Dawnc
      */
-    public function getPageSize() {
+    public function getPageSize()
+    {
         return $this->__size;
     }
 

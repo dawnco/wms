@@ -4,20 +4,20 @@
  * @date   2020-05-08
  */
 
-namespace wms\fw;
+namespace Wms\Fw;
 
 
 class View
 {
 
-    private static $data = array();
+    private static array $data = [];
 
     /**
      * 赋值模板
-     * @param String|array $key
+     * @param array|String $key
      * @param mixed        $val
      */
-    public static function assign($key, $val = null)
+    public static function assign(array|string $key, mixed $val = null): void
     {
         if (is_array($key)) {
             self::$data = array_merge(self::$data, $key);
@@ -28,11 +28,11 @@ class View
 
     /**
      * 合并或者增加val 到 $key中
-     * @param string  $key
-     * @param mixed   $val    数组或者字符串
-     * @param boolean $signal false  合并 $val 到 $key 中,  true 增加 val 到 $key中
+     * @param string       $key
+     * @param array|string $val    数组或者字符串
+     * @param boolean      $signal false  合并 $val 到 $key 中,  true 增加 val 到 $key中
      */
-    public static function addValue($key, $val = '', $signal = false)
+    public static function addValue(string $key, array|string $val = [], bool $signal = false): void
     {
         if (is_string($val) || $signal) {
             self::$data[$key][] = $val;
@@ -51,7 +51,7 @@ class View
      * @param string $tpl
      * @param array  $data
      */
-    public static function render($tpl = '', $data = array())
+    public static function render(string $tpl = '', array $data = [])
     {
         echo self::fetch($tpl, $data);
     }
@@ -62,7 +62,7 @@ class View
      * @param array  $data
      * @param string $layout
      */
-    public static function layout($tpl = "", $data = array(), $layout = "layout")
+    public static function layout(string $tpl = "", array $data = [], string $layout = "layout"): void
     {
         $data['tpl'] = $tpl;
         self::render($layout, $data);
@@ -74,11 +74,11 @@ class View
      * @param array  $data 数据
      * @return string
      */
-    public static function fetch($tpl = '', $data = array())
+    public static function fetch(string $tpl = '', array $data = array()): string
     {
         self::$data = array_merge(self::$data, $data);
 
-        $_file = APP_PATH . "/view/$tpl.tpl.php";
+        $_file = APP_PATH . "/View/$tpl.tpl.php";
 
         if (self::$data) {
             extract(self::$data);

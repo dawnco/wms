@@ -1,13 +1,14 @@
 <?php
 
-namespace wms\lib;
+namespace Wms\Lib;
 
 /**
  * 树操作
  * @author  Dawnc
  * @date    2014-06-27
  */
-class Tree {
+class Tree
+{
 
 
     /** 原始格式化好的数据 */
@@ -16,10 +17,11 @@ class Tree {
     private $__tree = null;
 
     private $__parentIds = array(); //父节点ID
-    private $__childIds  = array(); //子节点ID
+    private $__childIds = array(); //子节点ID
 
 
-    public function __construct() {
+    public function __construct()
+    {
 
     }
 
@@ -29,7 +31,8 @@ class Tree {
      * array(array("id","pid",..) , array("id","pid",..) ..)
      * @param array $data
      */
-    public function setData($data) {
+    public function setData($data)
+    {
         $this->__data = $this->__format($data);
         $this->__tree = $this->__toTree($this->__data);
     }
@@ -41,10 +44,11 @@ class Tree {
      * @param boolean $include 是否包含$id 本身
      * @return array
      */
-    public function getChildIds($id = 0, $include = true) {
+    public function getChildIds($id = 0, $include = true)
+    {
 
         $this->__childIds = array();
-        $child            = $this->getChilds($id);
+        $child = $this->getChilds($id);
         $this->__findChildId($child);
 
         $return = $this->__childIds;
@@ -58,7 +62,8 @@ class Tree {
      * 获取节点
      * @param int $id
      */
-    public function getNode($id = 0) {
+    public function getNode($id = 0)
+    {
         return isset($this->__data[$id]) ? $this->__data[$id] : array();
     }
 
@@ -68,7 +73,8 @@ class Tree {
      * 如果子类 active 为true 父类active 也为true
      * @param int $id
      */
-    public function setActive($id) {
+    public function setActive($id)
+    {
 
         $parentIds = $this->getParentIds($id);
 
@@ -91,7 +97,8 @@ class Tree {
      * 获取树
      * @return array
      */
-    public function getTree($id = 0) {
+    public function getTree($id = 0)
+    {
         return isset($this->__tree[$id]['child']) ? $this->__tree[$id]['child'] : array();
     }
 
@@ -99,7 +106,8 @@ class Tree {
      * 获取数据
      * @return array
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->__data;
     }
 
@@ -108,7 +116,8 @@ class Tree {
      * @param int $id
      * @return array
      */
-    public function getParentIds($id, $include = true) {
+    public function getParentIds($id, $include = true)
+    {
         $this->__parentIds = array();
         $this->__findParentIds($id);
         $ids = array_reverse($this->__parentIds);
@@ -122,9 +131,10 @@ class Tree {
      * 获取父类节点
      * @param int $id
      */
-    public function getParents($id, $include = true) {
-        $ids   = $this->getParentIds($id, $include);
-        $data  = $this->__data;
+    public function getParents($id, $include = true)
+    {
+        $ids = $this->getParentIds($id, $include);
+        $data = $this->__data;
         $nodes = array();
 
         foreach ($ids as $id) {
@@ -139,10 +149,11 @@ class Tree {
      * 找到 id 节点下的树
      * @param int $id
      */
-    public function getChilds($id = 0) {
+    public function getChilds($id = 0)
+    {
 
         if ($id != 0) {
-            $ids   = $this->getParentIds($id);
+            $ids = $this->getParentIds($id);
         } else {
             $ids[] = $id;
         }
@@ -154,9 +165,10 @@ class Tree {
      * 获取同级数据
      * @param int $id
      */
-    public function getSiblings($id) {
+    public function getSiblings($id)
+    {
         $data = array();
-        $pid  = $this->__data[$id]['pid'];
+        $pid = $this->__data[$id]['pid'];
         foreach ($this->__data as $vo) {
             if ($vo['pid'] == $pid) {
                 $data[] = $vo;
@@ -170,7 +182,8 @@ class Tree {
      * @param array $ids
      * @return array
      */
-    private function __findChildByParentIds($ids = array()) {
+    private function __findChildByParentIds($ids = array())
+    {
         $child = $this->__tree;
         foreach ($ids as $vo) {
             $child = isset($child[$vo]['child']) ? $child[$vo]['child'] : array();
@@ -179,7 +192,8 @@ class Tree {
     }
 
 
-    private function __format($items) {
+    private function __format($items)
+    {
         $tmp = array();
         foreach ($items as $vo) {
             $tmp[$vo['id']] = $vo;
@@ -192,7 +206,8 @@ class Tree {
      * @param array $items
      * @return array
      */
-    private function __toTree($items) {
+    private function __toTree($items)
+    {
         foreach ($items as $item) {
             $items[$item['pid']]['child'][$item['id']] = &$items[$item['id']];
         }
@@ -203,7 +218,8 @@ class Tree {
      * 树转换为 预排序树
      * @see http://blog.csdn.net/wisewillpower/article/details/2306461
      */
-    private function __toMptree() {
+    private function __toMptree()
+    {
 
     }
 
@@ -211,11 +227,12 @@ class Tree {
      * 获取父ID
      * @param int $current_id
      */
-    private function __findParentIds($current_id) {
+    private function __findParentIds($current_id)
+    {
         $pid = 0;
         foreach ($this->__data as $id => $vo) {
             if ($current_id == $id) {
-                $pid                 = $vo['pid'];
+                $pid = $vo['pid'];
                 $this->__parentIds[] = $pid;
                 break;
             }
@@ -230,7 +247,8 @@ class Tree {
      * 找子ID
      * @param array $child
      */
-    private function __findChildId($child) {
+    private function __findChildId($child)
+    {
         foreach ($child as $vo) {
             $this->__childIds[] = $vo['id'];
             if (isset($vo['child'])) {

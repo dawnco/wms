@@ -1,18 +1,24 @@
 {
-  "name": "dawnco/wms",
+  "name": "dawnco/wms-fw",
+  "description": "wms sample php framework",
   "authors": [
     {
       "name": "dawnco",
-      "email": "dawnco@163.com"
+      "email": "abke@qq.com"
     }
   ],
-  "require": {
-    "php": ">=7.0.0"
-  },
   "autoload": {
+    "files": [
+      "src/Helper/Function.php"
+    ],
     "psr-4": {
-      "wms\\": "src/"
+      "Wms\\": "src/"
     }
   },
-  "license": "MIT"
+  "require": {
+    "php": ">=7.4",
+    "ext-mysqli": "*",
+    "ext-pdo": "*",
+    "ext-json": "*"
+  }
 }

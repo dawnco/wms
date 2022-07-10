@@ -4,7 +4,7 @@
  * @date   2020-06-03
  */
 
-namespace wms\lib;
+namespace Wms\Lib;
 
 
 class TreeSample
@@ -15,9 +15,9 @@ class TreeSample
 
     private $config = [
         // id名称
-        'idName'    => 'id',
+        'idName' => 'id',
         // 父ID名称
-        'pidName'   => 'parentId',
+        'pidName' => 'parentId',
         //子节点名称
         'childName' => 'children'
     ];
@@ -57,7 +57,8 @@ class TreeSample
     {
         $items = $this->items;
         foreach ($items as $item) {
-            $items[$item[$this->config['pidName']]][$this->config['childName']][$item[$this->config['idName']]] = &$items[$item[$this->config['idName']]];
+            $items[$item[$this->config['pidName']]][$this->config['childName']][$item[$this->config['idName']]] = &
+                $items[$item[$this->config['idName']]];
         }
         return $items[$id][$this->config['childName']] ?? [];
     }
@@ -78,7 +79,8 @@ class TreeSample
      */
     public function tree()
     {
-        return $this->list_to_tree($this->items, $this->config['idName'], $this->config['pidName'], $this->config['childName']);
+        return $this->list_to_tree($this->items, $this->config['idName'], $this->config['pidName'],
+            $this->config['childName']);
     }
 
     /**
@@ -102,7 +104,7 @@ class TreeSample
                     $tree[] = &$list[$key];
                 } else {
                     if (isset($refer[$parentId])) {
-                        $parent           = &$refer[$parentId];
+                        $parent = &$refer[$parentId];
                         $parent[$child][] = &$list[$key];
                     }
                 }

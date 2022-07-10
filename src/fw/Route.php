@@ -4,114 +4,115 @@
  * @date   2020-05-08
  */
 
-namespace wms\fw;
+namespace Wms\Fw;
 
+
+use Wms\Constant\ErrorCode;
+use Wms\Exception\PageNotFoundException;
+use Wms\Exception\WmsException;
 
 class Route
 {
-    private $uri;
-    private $control;
-    private $method;
-    private $param;
+    private Request $request;
+    private string $path;
+    private string $control;
+    private string $method;
+    private array $param;
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getParam()
+    public function getParam(): array
     {
         return $this->param;
     }
 
 
-    public function __construct()
+    /**
+     * @throws WmsException
+     */
+    public function __construct(Request $request)
     {
-        return $this->parse($this->parseUri());
+        $this->request = $request;
+        $this->path = $request->getPath();
+        $this->initPath();
+        $this->parse();
     }
 
 
-    public function parse($uri)
+    /**
+     * @throws PageNotFoundException
+     */
+    public function parse(): void
     {
+        $path = $this->path;
         $rules = Conf::get("route") ?? [];
         //是否配置过路由
         foreach ($rules as $u => $r) {
-            $matches = [];
-            if (preg_match("#^$u$#", $uri, $matches)) {
-                $params        = $this->param($r, $matches);
-                $this->control = $r['c'];
-                $this->param   = $params;
-                return null;
+            $matches = array();
+            if (preg_match("#^$u$#", $path, $matches)) {
+                $this->param($r, $matches);
+                return;
             }
         }
-        throw new Exception("no route match");
+        throw new PageNotFoundException("no route match : $path", ErrorCode::PAGE_NOT_FOUND);
     }
 
-    private function parseUri()
+    private function initPath(): void
     {
 
-        if (isset($_GET['route'])) {
-            $uri = $_GET['route'];
-        } elseif (isset($_SERVER['REQUEST_URI'])) {
-            $pos = strpos($_SERVER['REQUEST_URI'], "?");
-            $uri = $pos > 0 ? substr($_SERVER['REQUEST_URI'], 0, $pos) : $_SERVER['REQUEST_URI'];
-        } else {
-            $uri = "";
-        }
+        $path = rtrim($this->path, "/");
 
-        $uri = trim($uri, "/");
         //去掉前缀
-        $base_uri = trim(Conf::get("app.base_uri"), " /");
+        $base_uri = rtrim(Conf::get("app.base_uri", ""), "/");
         if ($base_uri) {
-            if (strpos($uri, $base_uri) === 0) {
-                $uri = substr($uri, strlen($base_uri));
+            if (str_starts_with($path, $base_uri)) {
+                $path = substr($path, strlen($base_uri));
             }
         }
+
+        $path = rtrim($path, "/");
 
         //默认路由
-        if (!$uri) {
-            $uri = "portal";
+        if (!$path) {
+            $path = "/";
         }
-
-        $uri = trim($uri, "/");
-
-        $this->uri = $uri;
-        return $uri;
+        $this->path = $path;
     }
 
-    private function param($rule, $matches = [])
+    private function param($rule, $matches = []): void
     {
 
-        $this->control = $rule['c'];
-        $this->method  = isset($rule['m']) ? $rule['m'] : 'index';
+        $this->control = $rule['c'] ?? '';
+        $this->method = $rule['m'] ?? 'index';
 
         $url_param = array_slice($matches, 1);
         //合并参数
-        $param = [];
         if (isset($rule['p'])) {
             $param = array_merge((array)$rule['p'], $url_param);
         } else {
             $param = $url_param;
         }
         $this->param = $param;
-        return $param;
     }
 
-    public function getUri()
+    public function getPath(): string
     {
-        return $this->uri;
+        return $this->path;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getControl()
+    public function getControl(): string
     {
         return $this->control;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }

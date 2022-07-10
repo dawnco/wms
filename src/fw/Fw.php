@@ -4,118 +4,113 @@
  * @date   2020-05-10
  */
 
-namespace wms\fw;
+namespace Wms\Fw;
+
+use Throwable;
+use Wms\Exception\Handler\ExceptionHandler;
+use Wms\Exception\PageNotFoundException;
+use Wms\Exception\WmsException;
 
 class Fw
 {
-    public static $application = null;
 
-    public $hook  = null;
-    public $route = null;
-
-    public static function instance()
-    {
-        return self::$application = new self();
-    }
-
+    public Route $route;
 
     public function __construct()
     {
-        $this->autoload();
-        $this->loadConf();
+        date_default_timezone_set(Conf::get('app.timezone', 'PRC'));
     }
 
-    public function loadConf()
-    {
-        //load config
-        Conf::set('app', include APP_PATH . "/conf/app.conf.php");
-        Conf::set('route', include APP_PATH . "/conf/route.conf.php");
-        Conf::set('db', include APP_PATH . "/conf/db.conf.php");
-    }
 
-    public function run()
+    public function run(): void
     {
-
+        $response = null;
         try {
-            $this->exec();
-        } catch (\Exception $e) {
-            echo "<pre>";
-            echo $e->getMessage();
-            echo "\r\n";
-            echo $e->getTraceAsString();
-            echo "</pre>";
+            $request = new Request();
+            $this->route = new Route($request);
+            $response = $this->exec($request);
+            if ($response instanceof Response) {
+                $this->response($response);
+            } else {
+                $this->response((new Response())->withHeader('Content-type',
+                    'application/json; charset=UTF-8')->withContent(json_encode([
+                    'code' => 0,
+                    "message" => "",
+                    "data" => $response
+                ])));
+            }
+        } catch (Throwable $e) {
+            $handlerCls = Conf::get('app.exception.handler', ExceptionHandler::class);
+            /**
+             * @var  ExceptionHandler $handler
+             */
+            $handler = new $handlerCls();
+            $this->response($handler->handle($e, $response ?: new Response()));
         }
     }
 
-    private function exec()
+
+    private function response(Response $response): void
     {
-        $this->route = new Route();
-        $this->hook  = new Hook();
-        $this->hook();
+        header(sprintf('HTTP/1.1 %s %s', $response->getStatusCode(),
+            Response::getReasonPhraseByCode($response->getStatusCode())));
 
-        $this->hook->handle('pre_control');
-
-        $control = $this->route->getControl();
-        $method  = $this->route->getMethod();
-        $param   = $this->route->getParam();
-        if (!class_exists($control)) {
-            throw new Exception($control . " File Not Found");
+        foreach ($response->getHeaders() as $k => $v) {
+            header("$k:" . implode(", ", $v));
         }
 
-        $classInstance = new $control();
+        echo $response->getBody();
+    }
+
+    /**
+     * @throws PageNotFoundException
+     * @throws WmsException
+     */
+    private function exec($request)
+    {
+
+        $this->route = new Route($request);
+        $control = $this->route->getControl();
+        $method = $this->route->getMethod();
+        $param = $this->route->getParam();
+        if (!class_exists($control)) {
+            throw new PageNotFoundException($control . " File Not Found");
+        }
+
+        $classInstance = new $control($request);
 
         if (!method_exists($classInstance, $method)) {
-            throw new Exception($control . "->" . $method . "() Method Not Found");
+            throw new PageNotFoundException($control . "->" . $method . "() Method Not Found");
         }
 
-        call_user_func_array(array($classInstance, $method), $param);
-
-        $this->hook->handle('after_control');
+        return call_user_func_array(array($classInstance, $method), $param);
 
     }
 
-    public function shell()
-    {
-    }
-
-    public function autoload()
-    {
-        spl_autoload_register([$this, 'autoloadFn']);
-    }
-
-    public function autoloadFn($class_name)
+    /**
+     * @throws WmsException
+     */
+    public function shell($argv)
     {
 
-        $_class = str_replace(array("\\", "/"), "/", $class_name) . ".php";
+        $name = $argv[1];
 
-        $dir  = explode("/", $_class);
-        $file = "";
 
-        switch ($dir[0]) {
-            case "wms":
-                $file = WMS_PATH . "/" . substr($_class, 4);
-            break;
-            default :
-                $file = WMS_PATH . "/" . $_class;
-            break;
+        if (!$name) {
+            throw new WmsException("argument is empty");
         }
 
-        if (is_file($file)) {
-            include $file;
-        }
-    }
 
-    public function hook()
-    {
-        $hooks = Conf::get("hook");
-        foreach ((array)$hooks as $preg => $hook) {
-            if (preg_match("#^$preg$#i", $this->route->getUri())) {
-                $this->hook->add($hook['weld'], [
-                    new $hook['h'](),
-                    isset($hook['m']) ? $hook['m'] : "hook"
-                ], $hook['seq'], isset($hook['p']) ? $hook['p'] : []);
-            }
+        if (class_exists($name)) {
+            $clsName = $name;
+        } else {
+            $clsName = "\\App\\Shell\\" . $name;
         }
-    }
 
+        if (!class_exists($clsName)) {
+            throw new WmsException("$clsName SHELL不存在");
+        }
+        $cls = new $clsName();
+        return $cls->run(array_slice($argv, 2));
+    }
 }
