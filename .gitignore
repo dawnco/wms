@@ -2,7 +2,7 @@ node_modules
 .idea
 app.conf.php
 .sass-cache
-runtime
+Runtime
 vendor
 composer.lock
 app.conf.php
