@@ -14,7 +14,7 @@ abstract class Shell
 
     abstract protected function handle(?array $param = null): void;
 
-    public function run(?array $param = null)
+    public function run(?array $param = null): void
     {
         $this->handle($param);
     }

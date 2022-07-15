@@ -18,6 +18,7 @@
   "require": {
     "php": ">=7.4",
     "ext-pdo": "*",
-    "ext-json": "*"
+    "ext-json": "*",
+    "psr/http-server-middleware": "^1.0"
   }
 }
