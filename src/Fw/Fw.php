@@ -122,7 +122,8 @@ class Fw
 
         if (!$cmd) {
             foreach ($cli as $item) {
-                echo sprintf("php shell.php %s\n%s, %s\n\n", $item['cmd'], $item['name'], $item['description']);
+                echo sprintf("%s\n\033[32m php shell.php %s \033[0m\n%s\n-----------------------\n", $item['name'], $item['cmd'],
+                    $item['description']);
             }
         } else {
             foreach ($cli as $item) {
