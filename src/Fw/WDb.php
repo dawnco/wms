@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Wms\Fw;
 
-use Wms\Database\Connection;
+use Wms\Database\WDbConnect;
 
 /**
  * @method static insert(string $table, array $data = [])
@@ -30,13 +30,13 @@ class WDb
 
     /**
      * @param string $confName
-     * @return Connection
+     * @return WDbConnect
      */
-    public static function connection(string $confName = 'default'): Connection
+    public static function connection(string $confName = 'default'): WDbConnect
     {
         if (!isset(self::$connections[$confName])) {
             $conf = Conf::get("app.db.$confName");
-            self::$connections[$confName] = new Connection(
+            self::$connections[$confName] = new WDbConnect(
                 [
                     'hostname' => $conf['hostname'] ?? '127.0.0.1',
                     'port' => $conf['port'] ?? 3306,

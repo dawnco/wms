@@ -12,7 +12,7 @@ use Wms\Constant\ErrorCode;
 use Wms\Exception\PageNotFoundException;
 use Wms\Fw\Conf;
 
-class Connection
+class WDbConnect
 {
 
 

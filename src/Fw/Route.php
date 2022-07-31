@@ -66,7 +66,7 @@ class Route
         //去掉前缀
         $base_uri = rtrim(Conf::get("app.base_uri", ""), "/");
         if ($base_uri) {
-            if (str_starts_with($path, $base_uri)) {
+            if (strpos($path, $base_uri) === 0) {
                 $path = substr($path, strlen($base_uri));
             }
         }

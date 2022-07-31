@@ -89,28 +89,53 @@ class Fw
 
     /**
      * @throws WmsException
+     * @throws \ReflectionException
      */
-    public function shell($argv)
+    public function shell(array $param)
     {
 
-        $name = $argv[1];
+        $cmd = $param[1] ?? '';
 
-
-        if (!$name) {
-            throw new WmsException("argument is empty");
+        $cli = [];
+        $dir = Conf::get('app.shell_dir', "");
+        if (!$dir) {
+            throw new WmsException("shell_dir 没有指定");
+        }
+        if ($handle = opendir($dir)) {
+            while (false !== ($file = readdir($handle))) {
+                $basename = basename($file, ".php");
+                $baseShellNamespace = Conf::get('app.baseShellNamespace', 'App\Shell');
+                if ($basename != "." && $basename != "..") {
+                    $className = $baseShellNamespace . "\\" . $basename;
+                    $ref = new \ReflectionClass($className);
+                    $props = $ref->getDefaultProperties();
+                    $cli[$props['cmd']] = [
+                        "name" => $props['name'],
+                        "cmd" => $props['cmd'],
+                        "description" => $props['description'],
+                        "class" => $className,
+                    ];
+                }
+            }
         }
 
 
-        if (class_exists($name)) {
-            $clsName = $name;
+        if (!$cmd) {
+            foreach ($cli as $item) {
+                echo sprintf("php shell.php %s\n%s, %s\n\n", $item['cmd'], $item['name'], $item['description']);
+            }
         } else {
-            $clsName = "\\App\\Shell\\" . $name;
+            foreach ($cli as $item) {
+                if ($item['cmd'] == $cmd) {
+                    $clsName = $item['class'];
+                    /**
+                     * @var Shell $cls
+                     */
+                    $cls = new $clsName();
+                    $cls->handle(array_slice($param, 2));
+                    return;
+                }
+            }
         }
-
-        if (!class_exists($clsName)) {
-            throw new WmsException("$clsName SHELL不存在");
-        }
-        $cls = new $clsName();
-        return $cls->run(array_slice($argv, 2));
     }
 }

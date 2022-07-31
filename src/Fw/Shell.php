@@ -11,13 +11,23 @@ namespace Wms\Fw;
 
 abstract class Shell
 {
+    /**
+     * 名称
+     * @var string
+     */
+    public string $name = '';
 
-    abstract protected function handle(?array $param = null): void;
+    /**
+     * @var string 描述
+     */
+    public string $description = '';
 
-    public function run(?array $param = null): void
-    {
-        $this->handle($param);
-    }
+    /**
+     * @var string 执行命令
+     */
+    public string $cmd = '';
+
+    abstract public function handle(?array $param = null): void;
 
     protected function line(string $msg): void
     {

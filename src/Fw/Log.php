@@ -33,9 +33,6 @@ class Log
     public static function record(string $name, string $msg): void
     {
         $dir = Conf::get('app.log.dir');
-        if (!$dir) {
-            $dir = APP_PATH . "/Runtime";
-        }
         file_put_contents($dir . "/$name-" . date("Y-m-d") . ".log",
             sprintf("[%s] [%s] %s\n", date("Y-m-d H:i:s"), $name, $msg),
             FILE_APPEND);

@@ -1,5 +1,6 @@
 {
   "name": "dawnco/wms",
+  "version": "2.0",
   "description": "wms 2.0 sample php framework",
   "authors": [
     {
