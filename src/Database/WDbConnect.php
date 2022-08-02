@@ -9,7 +9,7 @@ namespace Wms\Database;
 use PDO;
 use PDOStatement;
 use Wms\Constant\ErrorCode;
-use Wms\Exception\PageNotFoundException;
+use Wms\Exception\DatabaseException;
 use Wms\Fw\Conf;
 
 class WDbConnect
@@ -31,6 +31,9 @@ class WDbConnect
      */
     public array $sql = [];
 
+    /**
+     * @throws DatabaseException
+     */
     public function __construct(array $config)
     {
         $this->config['hostname'] = $config['hostname'] ?? '127.0.0.1';
@@ -45,6 +48,9 @@ class WDbConnect
         $this->connect();
     }
 
+    /**
+     * @throws DatabaseException
+     */
     protected function connect()
     {
 
@@ -53,7 +59,7 @@ class WDbConnect
         }
 
         if ($this->retry++ > 3) {
-            throw new PageNotFoundException(sprintf("SQL ERROR connect %s fail after retry 3 time",
+            throw new DatabaseException(sprintf("SQL ERROR connect %s fail after retry 3 time",
                 $this->config['hostname']));
         }
 
@@ -67,7 +73,7 @@ class WDbConnect
                 $this->config['options']);
         } catch (\PDOException $e) {
             $msg = sprintf("SQL ERROR connect %s fail %s", $this->config['hostname'], $e->getMessage());
-            throw new PageNotFoundException($msg, ErrorCode::DATABASE_ERROR, $e);
+            throw new DatabaseException($msg, ErrorCode::DATABASE_ERROR, $e);
         }
 
         $this->dbh->setAttribute(PDO::ATTR_CASE, PDO::CASE_NATURAL);
@@ -86,7 +92,7 @@ class WDbConnect
      * @param string $query
      * @param array  $params
      * @return void
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function execute(string $query, array $params = []): void
     {
@@ -98,7 +104,7 @@ class WDbConnect
      * @param string $table 表
      * @param array  $data  数据
      * @return void
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function insert(string $table, array $data): void
     {
@@ -117,7 +123,7 @@ class WDbConnect
      * @param string $table 表
      * @param array  $data  数据
      * @return void
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function replace(string $table, array $data): void
     {
@@ -134,7 +140,7 @@ class WDbConnect
      * @param string $table
      * @param array  $data
      * @return int 插入的自增ID
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function insertGetId(string $table, array $data): int
     {
@@ -147,7 +153,7 @@ class WDbConnect
      * @param string $table
      * @param array  $data
      * @return void
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function insertBatch(string $table, array $data = []): void
     {
@@ -175,7 +181,7 @@ class WDbConnect
      * @param string $table 表
      * @param array  $where 数据 ['id'=>1, 'pid'=>1]
      * @return void
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function delete(string $table, array $where): void
     {
@@ -197,7 +203,7 @@ class WDbConnect
      * @param array  $data  数据
      * @param array  $where 条件 例如 ['id'=>1]
      * @return void
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function update(string $table, array $data, array $where): void
     {
@@ -230,9 +236,9 @@ class WDbConnect
      * @param array  $params    绑定值
      * @param string $className 结果对象
      * @return mixed
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
-    public function getLine(string $query, array $params = [], string $className = 'stdClass'): mixed
+    public function getLine(string $query, array $params = [], string $className = 'stdClass')
     {
         $sth = $this->statement($query, $params);
         $sth->setFetchMode(PDO::FETCH_CLASS, $className);
@@ -245,7 +251,7 @@ class WDbConnect
      * @param array  $params    绑定值
      * @param string $className 结果映射类
      * @return array
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function getData(string $query, array $params = [], string $className = 'stdClass'): array
     {
@@ -258,7 +264,7 @@ class WDbConnect
      * @param string $query  sql语句
      * @param array  $params 绑定值
      * @return mixed
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function getVar(string $query, array $params = [])
     {
@@ -270,7 +276,7 @@ class WDbConnect
      * @param string $query
      * @param array  $params
      * @return PDOStatement
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function statement(string $query, array $params): PDOStatement
     {
@@ -284,7 +290,7 @@ class WDbConnect
 
             if (!$result) {
                 $msg = sprintf("SQL ERROR  { %s : %s }", $query, json_encode($params));
-                throw new PageNotFoundException($msg);
+                throw new DatabaseException($msg);
             }
             return $sth;
         } catch (\PDOException $e) {
@@ -295,40 +301,40 @@ class WDbConnect
             }
 
             $msg = sprintf("SQL ERROR  %s { %s : %s }", $e->getMessage(), $query, json_encode($params));
-            throw new PageNotFoundException($msg, ErrorCode::DATABASE_ERROR, $e);
+            throw new DatabaseException($msg, ErrorCode::DATABASE_ERROR, $e);
         }
     }
 
     /**
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function begin(): void
     {
         $ret = $this->dbh->beginTransaction();
         if (!$ret) {
-            throw new PageNotFoundException("transaction begin error ");
+            throw new DatabaseException("transaction begin error ");
         }
     }
 
     /**
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function commit(): void
     {
         $ret = $this->dbh->commit();
         if (!$ret) {
-            throw new PageNotFoundException("transaction commit error ");
+            throw new DatabaseException("transaction commit error ");
         }
     }
 
     /**
-     * @throws PageNotFoundException
+     * @throws DatabaseException
      */
     public function rollback(): void
     {
         $ret = $this->dbh->rollBack();
         if (!$ret) {
-            throw new PageNotFoundException("transaction rollback error ");
+            throw new DatabaseException("transaction rollback error ");
         }
     }
 

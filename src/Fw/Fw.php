@@ -107,6 +107,9 @@ class Fw
                 $baseShellNamespace = Conf::get('app.baseShellNamespace', 'App\Shell');
                 if ($basename != "." && $basename != "..") {
                     $className = $baseShellNamespace . "\\" . $basename;
+                    if (!class_exists($className)) {
+                        continue;
+                    }
                     $ref = new \ReflectionClass($className);
                     $props = $ref->getDefaultProperties();
                     $cli[$props['cmd']] = [
