@@ -300,7 +300,7 @@ class WDbConnect
                 return $this->statement($query, $params);
             }
 
-            $msg = sprintf("SQL ERROR  %s { %s : %s }", $e->getMessage(), $query, json_encode($params));
+            $msg = sprintf("SQL prepare|execute ERROR %s { %s : %s }", $e->getMessage(), $query, json_encode($params));
             throw new DatabaseException($msg, ErrorCode::DATABASE_ERROR, $e);
         }
     }
