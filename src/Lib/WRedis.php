@@ -21,22 +21,18 @@ class WRedis
      * @return Redis
      * @throws WmsException
      */
-    public static function connection(array $conf = []): Redis
+    public static function connection(string $name = 'default'): Redis
     {
-
-        if (!$conf) {
-            $conf = Conf::get('app.redis.default');
-        }
-        $name = md5(json_encode($conf));
-
-        if (self::$instance[$name]) {
+        if (isset(self::$instance[$name])) {
             return self::$instance[$name];
         }
 
+        $conf = Conf::get("app.redis.{$name}");
+
         self::$instance[$name] = new Redis();
         $connected = self::$instance[$name]->connect(
-            $conf['hostname'],
-            $conf['port'],
+            $conf['hostname'] ?? '127.0.0.1',
+            $conf['port'] ?? 6379,
             $conf['timeout'] ?? 10);
 
         if (!$connected) {
