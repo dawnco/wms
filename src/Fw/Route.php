@@ -83,6 +83,14 @@ class Route
     private function param($rule, $matches = []): void
     {
 
+        if (isset($rule[0]) && isset($rule[1])) {
+            // 路由配置
+            $this->control = $rule[0];
+            $this->method = $rule[1];
+            $this->param = [];
+            return;
+        }
+
         $this->control = $rule['c'] ?? '';
         $this->method = $rule['m'] ?? 'index';
 
