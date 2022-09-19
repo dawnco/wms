@@ -72,18 +72,19 @@ class Fw
         $this->route = new Route($request);
         $control = $this->route->getControl();
         $method = $this->route->getMethod();
-        $param = $this->route->getParam();
+        $request->meta = $this->route->getMeta();
+        $request->urlParams = $this->route->getUrlParams();
+
         if (!class_exists($control)) {
             throw new PageNotFoundException($control . " File Not Found");
         }
-        $request->meta = $param;
         $classInstance = new $control($request);
 
         if (!method_exists($classInstance, $method)) {
             throw new PageNotFoundException($control . "->" . $method . "() Method Not Found");
         }
 
-        return call_user_func_array(array($classInstance, $method), $param);
+        return call_user_func(array($classInstance, $method));
 
     }
 

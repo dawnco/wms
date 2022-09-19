@@ -15,6 +15,7 @@ class Request
     private array $get;
 
     public array $meta = [];
+    public array $urlParams = [];
 
     public function __construct()
     {
