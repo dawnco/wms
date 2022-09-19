@@ -14,6 +14,8 @@ class Request
     private array $post;
     private array $get;
 
+    public array $meta = [];
+
     public function __construct()
     {
         $this->rawJson = json_decode(file_get_contents("php://input"), true) ?: [];

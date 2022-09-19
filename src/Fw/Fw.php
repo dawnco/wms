@@ -66,7 +66,7 @@ class Fw
      * @throws PageNotFoundException
      * @throws WmsException
      */
-    private function exec($request)
+    private function exec(Request $request)
     {
 
         $this->route = new Route($request);
@@ -76,7 +76,7 @@ class Fw
         if (!class_exists($control)) {
             throw new PageNotFoundException($control . " File Not Found");
         }
-
+        $request->meta = $param;
         $classInstance = new $control($request);
 
         if (!method_exists($classInstance, $method)) {
