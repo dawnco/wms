@@ -19,5 +19,5 @@ app/conf/app.conf.php
 # 使用shell 例子
 
 ```
-php shell.php test
+php shell.php
 ```
