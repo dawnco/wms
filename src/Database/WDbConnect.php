@@ -269,7 +269,8 @@ class WDbConnect
     public function getVar(string $query, array $params = [])
     {
         $sth = $this->statement($query, $params);
-        return $sth->fetchColumn() ?: null;
+        $val = $sth->fetchColumn();
+        return $val === false ? null : $val;
     }
 
     /**
