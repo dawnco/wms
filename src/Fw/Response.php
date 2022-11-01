@@ -135,7 +135,7 @@ class Response
         }
         $new = clone $this;
         $normalized = strtolower($name);
-        $new->headers[$normalized] = array_merge($new->headers[$normalized], $value);
+        $new->headers[$normalized] = array_merge($new->headers[$normalized] ?? [], $value);
         return $new;
     }
 
