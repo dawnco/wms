@@ -108,14 +108,7 @@ class WDbConnect
      */
     public function insert(string $table, array $data): void
     {
-        $fields = array_keys($data);
-        $values = array_values($data);
-        $fieldsStr = implode("`,`", $fields);
-        $holders = implode(',', array_fill(0, count($fields), '?'));
-        $query = "INSERT INTO `{$table}` (`{$fieldsStr}`) VALUE ({$holders})";
-
-        $this->statement($query, $values);
-
+        $this->insertOrReplace($table, $data, "INSERT");
     }
 
     /**
@@ -125,13 +118,48 @@ class WDbConnect
      * @return void
      * @throws DatabaseException
      */
-    public function replace(string $table, array $data): void
+    public function insertOnReplace(string $table, array $data): void
+    {
+        $this->insertOrReplace($table, $data, "REPLACE");
+    }
+
+    /**
+     * 如果唯一KEY存在更新表,不存在则插入
+     * @param string $table
+     * @param array  $data
+     */
+    public function insertOnDuplicate(string $table, array $data, array $update): void
+    {
+        $fields = [];
+        $values = [];
+        $duplicate = [];
+        foreach ($data as $field => $value) {
+            $fields[] = "`{$field}`";
+            $values[] = '?';
+        }
+
+        foreach ($update as $field => $value) {
+            $duplicate[] = "`$field` = ?";
+        }
+
+        $insert_fields = implode(', ', $fields);
+        $insert_data = implode(', ', $values);
+        $sql =
+            "INSERT INTO `{$table}` ({$insert_fields}) values ({$insert_data}) ON DUPLICATE KEY UPDATE " . implode(",",
+                $duplicate);
+
+        $val = array_values($data);
+        $upVal = array_values($update);
+        $this->statement($sql, array_merge($val, $upVal));
+    }
+
+    protected function insertOrReplace(string $table, array $data, string $cmd)
     {
         $fields = array_keys($data);
         $values = array_values($data);
         $fieldsStr = implode("`,`", $fields);
         $holders = implode(',', array_fill(0, count($fields), '?'));
-        $query = "REPLACE INTO `{$table}` (`{$fieldsStr}`) VALUE ({$holders})";
+        $query = "$cmd INTO `{$table}` (`{$fieldsStr}`) VALUE ({$holders})";
         $this->statement($query, $values);
     }
 
@@ -157,6 +185,23 @@ class WDbConnect
      */
     public function insertBatch(string $table, array $data = []): void
     {
+        $this->insertOrReplaceBatch($table, $data, 'INSERT');
+    }
+
+    /**
+     * 批量插入
+     * @param string $table
+     * @param array  $data
+     * @return void
+     * @throws DatabaseException
+     */
+    public function insertBatchOnReplace(string $table, array $data = []): void
+    {
+        $this->insertOrReplaceBatch($table, $data, 'REPLACE');
+    }
+
+    protected function insertOrReplaceBatch(string $table, array $data = [], string $cmd)
+    {
         $fields = array_keys($data[0]);
         $fieldsStr = implode("`,`", $fields);
         $holdersOne = implode(',', array_fill(0, count($fields), '?'));
@@ -172,7 +217,7 @@ class WDbConnect
 
         $holders = rtrim($holders, ",");
 
-        $query = "INSERT INTO `{$table}` (`{$fieldsStr}`) VALUES {$holders}";
+        $query = "$cmd INTO `{$table}` (`{$fieldsStr}`) VALUES {$holders}";
         $this->statement($query, $values);
     }
 
