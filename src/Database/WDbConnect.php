@@ -183,7 +183,7 @@ class WDbConnect
      * @return void
      * @throws DatabaseException
      */
-    public function insertBatch(string $table, array $data = []): void
+    public function insertBatch(string $table, array $data): void
     {
         $this->insertOrReplaceBatch($table, $data, 'INSERT');
     }
@@ -195,12 +195,12 @@ class WDbConnect
      * @return void
      * @throws DatabaseException
      */
-    public function insertBatchOnReplace(string $table, array $data = []): void
+    public function insertBatchOnReplace(string $table, array $data): void
     {
         $this->insertOrReplaceBatch($table, $data, 'REPLACE');
     }
 
-    protected function insertOrReplaceBatch(string $table, array $data = [], string $cmd)
+    protected function insertOrReplaceBatch(string $table, array $data, string $cmd)
     {
         $fields = array_keys($data[0]);
         $fieldsStr = implode("`,`", $fields);
