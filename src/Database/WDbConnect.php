@@ -108,7 +108,7 @@ class WDbConnect
      */
     public function insert(string $table, array $data): void
     {
-        $this->insertOrReplace($table, $data, "INSERT");
+        $this->insertCmd($table, $data, "INSERT");
     }
 
     /**
@@ -120,8 +120,21 @@ class WDbConnect
      */
     public function insertOnReplace(string $table, array $data): void
     {
-        $this->insertOrReplace($table, $data, "REPLACE");
+        $this->insertCmd($table, $data, "REPLACE");
     }
+
+    /**
+     * Replace 一条记录 如果存在PRIMARY或UNIQUE相同的记录，则忽略。
+     * @param string $table 表
+     * @param array  $data  数据
+     * @return void
+     * @throws DatabaseException
+     */
+    public function insertOnIgnore(string $table, array $data): void
+    {
+        $this->insertCmd($table, $data, "INSERT IGNORE");
+    }
+
 
     /**
      * 如果唯一KEY存在更新表,不存在则插入
@@ -153,7 +166,7 @@ class WDbConnect
         $this->statement($sql, array_merge($val, $upVal));
     }
 
-    protected function insertOrReplace(string $table, array $data, string $cmd)
+    protected function insertCmd(string $table, array $data, string $cmd)
     {
         $fields = array_keys($data);
         $values = array_values($data);
@@ -185,7 +198,7 @@ class WDbConnect
      */
     public function insertBatch(string $table, array $data): void
     {
-        $this->insertOrReplaceBatch($table, $data, 'INSERT');
+        $this->insertBatchCmd($table, $data, 'INSERT');
     }
 
     /**
@@ -197,10 +210,22 @@ class WDbConnect
      */
     public function insertBatchOnReplace(string $table, array $data): void
     {
-        $this->insertOrReplaceBatch($table, $data, 'REPLACE');
+        $this->insertBatchCmd($table, $data, 'REPLACE');
     }
 
-    protected function insertOrReplaceBatch(string $table, array $data, string $cmd)
+    /**
+     * 批量插入 忽略重复主键
+     * @param string $table
+     * @param array  $data
+     * @return void
+     * @throws DatabaseException
+     */
+    public function insertBatchOnIgnore(string $table, array $data): void
+    {
+        $this->insertBatchCmd($table, $data, 'INSERT IGNORE');
+    }
+
+    protected function insertBatchCmd(string $table, array $data, string $cmd)
     {
         $fields = array_keys($data[0]);
         $fieldsStr = implode("`,`", $fields);
