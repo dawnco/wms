@@ -30,4 +30,9 @@ class ErrorCode
      * 页面不存在
      */
     const  PAGE_NOT_FOUND = 40;
+
+    /**
+     * 没有权限
+     */
+    const NO_PERMISSION = 50;
 }

@@ -181,7 +181,6 @@ class WDbConnect
      * @param string $table
      * @param array  $data
      * @return int 插入的自增ID
-     * @throws DatabaseException
      */
     public function insertGetId(string $table, array $data): int
     {
@@ -194,7 +193,6 @@ class WDbConnect
      * @param string $table
      * @param array  $data
      * @return void
-     * @throws DatabaseException
      */
     public function insertBatch(string $table, array $data): void
     {
@@ -206,7 +204,6 @@ class WDbConnect
      * @param string $table
      * @param array  $data
      * @return void
-     * @throws DatabaseException
      */
     public function insertBatchOnReplace(string $table, array $data): void
     {
@@ -218,7 +215,6 @@ class WDbConnect
      * @param string $table
      * @param array  $data
      * @return void
-     * @throws DatabaseException
      */
     public function insertBatchOnIgnore(string $table, array $data): void
     {

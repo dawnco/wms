@@ -22,7 +22,7 @@ class ExceptionHandler
      */
     public function handle(Throwable $throwable, Response $response): Response
     {
-        return $response->withContent(json_encode([
+        return $response->withHeader('Content-type', 'application/json; charset=UTF-8')->withContent(json_encode([
             'code' => $throwable->getCode(),
             'message' => $throwable->getMessage(),
             'trace' => $throwable->getTrace(),
