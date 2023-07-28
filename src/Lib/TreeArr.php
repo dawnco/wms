@@ -20,7 +20,7 @@ namespace Wms\Lib;
  */
 class TreeArr
 {
-    protected $id = 100;
+    protected int $id = 100;
 
     /**
      * 处理后的数据 格式
@@ -31,7 +31,7 @@ class TreeArr
      * 'a^b^c' => [name=> 名称, pid => 父id, id=> id]
      * ]
      */
-    protected $data = [];
+    protected array $data = [];
     // 待处理数据
     protected $srcData = [];
 
@@ -39,7 +39,7 @@ class TreeArr
     {
     }
 
-    public function id()
+    public function id():int
     {
         return $this->id++;
     }
@@ -49,7 +49,7 @@ class TreeArr
      *                   a是b的父级 b是c的父级
      * @return array     生成的树二维结构
      */
-    public function handle($arr = [])
+    public function handle(array $arr = [])
     {
 
         $tmp = [];
@@ -65,7 +65,7 @@ class TreeArr
      * 生成对应ID
      * @param array $arr [a,b,c]  a是b的父级
      */
-    protected function genId($arr = [])
+    protected function genId(array $arr = [])
     {
         if (count($arr) == 0) {
             return 1;
@@ -85,7 +85,7 @@ class TreeArr
     }
 
 
-    protected function wrap($arr)
+    protected function wrap($arr): string
     {
         return implode("^", $arr);
     }

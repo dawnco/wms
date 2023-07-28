@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Wms\Exception\Handler;
 
 use Throwable;
+use Wms\Fw\Conf;
 use Wms\Fw\Response;
 
 class ExceptionHandler
@@ -22,10 +23,21 @@ class ExceptionHandler
      */
     public function handle(Throwable $throwable, Response $response): Response
     {
-        return $response->withHeader('Content-type', 'application/json; charset=UTF-8')->withContent(json_encode([
+
+        $row = [
             'code' => $throwable->getCode(),
             'message' => $throwable->getMessage(),
-            'trace' => $throwable->getTrace(),
-        ]));
+        ];
+
+        if (Conf::get('app.env') == 'dev') {
+            $row['exception'] = [
+                'file' => $throwable->getFile(),
+                'line' => $throwable->getLine(),
+                'trace' => $throwable->getTrace(),
+            ];
+        }
+
+        return $response->withHeader('Content-type', 'application/json; charset=UTF-8')->withContent(json_encode($row,
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 }

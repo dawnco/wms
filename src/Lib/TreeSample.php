@@ -10,7 +10,7 @@ namespace Wms\Lib;
 class TreeSample
 {
 
-    private $items = [];
+    private array $items = [];
 
 
     private $config = [

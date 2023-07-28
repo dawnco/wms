@@ -17,9 +17,10 @@ class WRedis
     private static array $instance = [];
 
     /**
-     * @param array $conf
+     * @param string $name
      * @return Redis
      * @throws WmsException
+     * @throws \RedisException
      */
     public static function connection(string $name = 'default'): Redis
     {
