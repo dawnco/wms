@@ -92,8 +92,10 @@ class Log
          * @return void
          */
 
-        file_put_contents($dir . "/$serviceName-$category-" . date("Y-m-d") . ".log",
+        $file = $dir . "/$serviceName-$category-" . date("Y-m-d") . ".log";
+        file_put_contents($file,
             $msg,
             FILE_APPEND);
+        chmod($file, 0777);
     }
 }
