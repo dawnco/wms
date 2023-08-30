@@ -66,7 +66,7 @@ class Log
         ?string $category,
         ?string $tag,
         ?string $requestId,
-        ?string $time,
+        ?int $time,
         ?array $data
     ): void {
 
