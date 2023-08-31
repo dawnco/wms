@@ -91,11 +91,10 @@ class Log
          * @param string|null $requestId
          * @return void
          */
-
         $file = $dir . "/$serviceName-$category-" . date("Y-m-d") . ".log";
-        file_put_contents($file,
+        @file_put_contents($file,
             $msg,
-            FILE_APPEND);
-        chmod($file, 0777);
+            FILE_APPEND | LOCK_EX);
+        @chmod($file, 0777);
     }
 }
