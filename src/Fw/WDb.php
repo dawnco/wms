@@ -22,6 +22,9 @@ use Wms\Database\WDbConnect;
  * @method static getData(string $query, array $params = [], string $className = 'stdClass')
  * @method static getVar(string $query, array $params = [])
  * @method static execute(string $query, array $params = [])
+ * @method static begin()
+ * @method static commit()
+ * @method static rollback()
  */
 class WDb
 {
