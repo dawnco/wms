@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Wms\Exception\Handler;
 
 use Throwable;
+use Wms\Constant\ErrorCode;
 use Wms\Fw\Conf;
 use Wms\Fw\Response;
 
@@ -24,8 +25,9 @@ class ExceptionHandler
     public function handle(Throwable $throwable, Response $response): Response
     {
 
+        $code = $throwable->getCode();
         $row = [
-            'code' => $throwable->getCode(),
+            'code' => $code ?: ErrorCode::SYSTEM_ERROR,
             'message' => $throwable->getMessage(),
         ];
 
