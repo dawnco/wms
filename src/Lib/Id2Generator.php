@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Wms\Lib;
 
 
-use Wms\Exception\WmsException;
+use Wms\Exception\WmsException as AppException;
 
 class Id2Generator
 {
@@ -24,7 +24,7 @@ class Id2Generator
      * 初始年份
      * @var int
      */
-    protected static int $initialYear = 2023;
+    protected static int $initialYear = 2000;
 
     /**
      * 生成订单号  时区要指定成当地时区
@@ -38,7 +38,7 @@ class Id2Generator
             $timestamp = time();
         }
         [$year, $month, $day] = explode('-', date('Y-n-d', $timestamp));
-        $yearCode = ($year - self::$initialYear) % 10;
+        $yearCode = $year - self::$initialYear;
         $diffMonth = (string)(12 - $month);
         $monthCode = str_pad($diffMonth, 2, '0', STR_PAD_LEFT);
         $beginSecond = strtotime(date('Y-m-d', $timestamp));
@@ -53,17 +53,17 @@ class Id2Generator
     /**
      * 解析
      * @param int|string $id
-     * @return array ["ym" => "2304", "timestamp"=> "时间戳"]
+     * @return array ["ym" => "2304", ""]
      */
     public static function parse($id): array
     {
         $string = (string)$id;
         $systemCode = (int)substr($string, 0, 1); // 系统编码
-        $year = (int)substr($string, 1, 1) + self::$initialYear; // 年份编码
-        $day = (int)substr($string, 2, 2); // 日期编码
-        $incr = (int)substr($string, 4, 4); // 自增编码
-        $month = 12 - (int)substr($string, 8, 2); // 月份编码
-        $diffSecond = (int)substr($string, 10, 5); // 当日秒编码
+        $year = (int)substr($string, 1, 2) + self::$initialYear; // 年份编码
+        $day = (int)substr($string, 3, 2); // 日期编码
+        $incr = (int)substr($string, 5, 4); // 自增编码
+        $month = 12 - (int)substr($string, 9, 2); // 月份编码
+        $diffSecond = (int)substr($string, 11, 5); // 当日秒编码
         $timestamp = strtotime("$year-$month-$day") + $diffSecond;
         $ym = sprintf("%s%s", str_pad(strval($year - 2000), 2, "0", STR_PAD_LEFT),
             str_pad(strval($month), 2, "0", STR_PAD_LEFT));
@@ -92,7 +92,7 @@ EOT;
                 $key
             ]);
         } catch (\Throwable $throwable) {
-            throw new WmsException("ID2生成自增异常");
+            throw new AppException("ID2生成自增异常");
         }
 
     }
