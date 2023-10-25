@@ -7,11 +7,10 @@ declare(strict_types=1);
  * @date   2023-10-25
  */
 
-namespace WLib\Lib;
+namespace Wms\Lib;
 
 
 use Wms\Exception\WmsException;
-use Wms\Lib\WRedis;
 
 class Id2Generator
 {
@@ -85,7 +84,7 @@ class Id2Generator
             -- local key = {$key} .. KEYS[1]
             local key = ARGV[1]
             local incr = redis.call('incr', key)
-            redis.call('expire', key, 2)
+            redis.call('expire', key, 60)
             return incr
 EOT;
             $sha = $redis->script('load', $script);
