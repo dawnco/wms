@@ -59,8 +59,10 @@ class WDbConnect
         }
 
         if ($this->retry++ > 3) {
-            throw new DatabaseException(sprintf("SQL ERROR connect %s fail after retry 3 time",
-                $this->config['hostname']));
+            throw new DatabaseException(sprintf("SQL ERROR connect %s %s fail after retry 3 time",
+                $this->config['hostname'],
+                $this->config['database'],
+            ));
         }
 
         $dsn =
@@ -72,7 +74,8 @@ class WDbConnect
                 $this->config['password'],
                 $this->config['options']);
         } catch (\PDOException $e) {
-            $msg = sprintf("SQL ERROR connect %s fail %s", $this->config['hostname'], $e->getMessage());
+            $msg = sprintf("SQL ERROR connect %s %s fail %s", $this->config['hostname'], $this->config['database'],
+                $e->getMessage());
             throw new DatabaseException($msg, ErrorCode::DATABASE_ERROR, $e);
         }
 
@@ -84,6 +87,8 @@ class WDbConnect
         if ($this->config['timezone']) {
             $this->execute('SET time_zone = ?', [$this->config['timezone']]);
         }
+
+        $this->retry = 0; // 重连成功后
 
     }
 
@@ -348,6 +353,11 @@ class WDbConnect
     public function statement(string $query, array $params): PDOStatement
     {
         try {
+
+            if ($this->dbh == null) {
+                throw new \PDOException("MySQL server has gone away", ErrorCode::DATABASE_ERROR);
+            }
+
             $sth = $this->dbh->prepare($query);
             $result = $sth->execute($params);
 
@@ -361,7 +371,7 @@ class WDbConnect
             }
             return $sth;
         } catch (\PDOException $e) {
-            if (strpos($e->getMessage(), 'MySQL server has gone away')) {
+            if (strpos($e->getMessage(), 'MySQL server has gone away') !== false) {
                 // 重试机制
                 $this->connect();
                 return $this->statement($query, $params);
