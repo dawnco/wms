@@ -59,7 +59,7 @@ class WDbConnect
         }
 
         if ($this->retry++ > 3) {
-            throw new DatabaseException(sprintf("SQL ERROR connect %s %s fail after retry 3 time",
+            throw new DatabaseException(sprintf("MySQL server has gone away SQL ERROR connect %s %s fail after retry 3 time",
                 $this->config['hostname'],
                 $this->config['database'],
             ));
@@ -74,7 +74,7 @@ class WDbConnect
                 $this->config['password'],
                 $this->config['options']);
         } catch (\PDOException $e) {
-            $msg = sprintf("SQL ERROR connect %s %s fail %s", $this->config['hostname'], $this->config['database'],
+            $msg = sprintf("MySQL server has gone away SQL ERROR connect %s %s fail %s", $this->config['hostname'], $this->config['database'],
                 $e->getMessage());
             throw new DatabaseException($msg, ErrorCode::DATABASE_ERROR, $e);
         }
