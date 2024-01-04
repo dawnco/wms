@@ -344,6 +344,10 @@ class WDbConnect
         return $val === false ? null : $val;
     }
 
+    public function setRetry(int $time = 3){
+        $this->retry = $time;
+    }
+
     /**
      * @param string $query
      * @param array  $params

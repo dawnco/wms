@@ -22,6 +22,7 @@ use Wms\Database\WDbConnect;
  * @method static getData(string $query, array $params = [], string $className = 'stdClass')
  * @method static getVar(string $query, array $params = [])
  * @method static execute(string $query, array $params = [])
+ * @method static setRetry(int $retry = 3) 设置重试多少次
  * @method static begin()
  * @method static commit()
  * @method static rollback()
