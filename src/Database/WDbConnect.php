@@ -66,7 +66,7 @@ class WDbConnect
         }
 
         $dsn =
-            "mysql:host={$this->config['hostname']};dbname={$this->config['database']};port={$this->config['port']}charset={$this->config['charset']}";
+            "mysql:host={$this->config['hostname']};dbname={$this->config['database']};port={$this->config['port']};charset={$this->config['charset']}";
 
         try {
             $this->dbh = new PDO($dsn,
