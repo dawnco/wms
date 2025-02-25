@@ -79,7 +79,7 @@ class Log
             $tag,
             $requestId,
             $time,
-            json_encode($data));
+            json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
         /**
          * 日志格式 [北京时间] [服务] [一级分类] [二级分类] [requestId] [time] msg
