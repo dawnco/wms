@@ -46,7 +46,7 @@ class LogCenter
     {
 
         if (self::$stream == null) {
-            self::$stream = stream_socket_client("udp://log.stat.com:8844", $errno, $error);
+            self::$stream = stream_socket_client("udp://error.log.stat.com:8844", $errno, $error);
             if (!self::$stream) {
                 return;
             }
