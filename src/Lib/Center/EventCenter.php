@@ -9,15 +9,15 @@ declare(strict_types=1);
 
 namespace Wms\Lib\Center;
 
+
 use Wms\Fw\Conf;
 use Wms\Fw\Log;
 
 class EventCenter
 {
 
-    private static $stream = null;
-
     /**
+     * 发送事件数据
      * @param string $name      事件名称
      * @param array  $params    key的类型必须是字符串, value 类型任意 格式 ["key1"=>1, "key2"=>"value2"]
      * @param string $requestId
@@ -47,18 +47,9 @@ class EventCenter
 
     protected static function send(string $data): void
     {
-
-        if (self::$stream == null) {
-            self::$stream = stream_socket_client("udp://center.stat.com:9820", $errno, $error);
-            if (!self::$stream) {
-                return;
-            }
-            // https://www.php.net/manual/zh/function.stream-set-blocking.php
-            stream_set_blocking(self::$stream, false);
-        }
         $str = self::pack($data);
-        if ($str && self::$stream) {
-            fwrite(self::$stream, $str);
+        if ($str) {
+            Client::send($str, "center.stat.com:9820");
         }
     }
 
@@ -70,7 +61,7 @@ class EventCenter
         $size = pack('n', $length);
 
         if ($length > 10235) {
-            Log::error("EventCenter 数据超出最大限制 $data");
+            Log::error("EventCenter 数据过长 $data");
             return "";
         }
 

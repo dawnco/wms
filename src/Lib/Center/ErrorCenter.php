@@ -9,15 +9,15 @@ declare(strict_types=1);
 
 namespace Wms\Lib\Center;
 
+
 use Wms\Fw\Conf;
 use Wms\Fw\Log;
 
 class ErrorCenter
 {
 
-    private static $stream = null;
-
     /**
+     * 发送错误需要处理的时候记录的错误日志
      * @param array $data 格式 查看 文档
      * @return void
      */
@@ -40,7 +40,7 @@ class ErrorCenter
             "level" => (string)arr_get($data, "level", "error"),
             "requestId" => (string)arr_get($data, "requestId", ""),
             "date" => (string)(arr_get($data, "date") ?: date("Y-m-d", intval($ms / 1000))),
-            "service" => (string)arr_get($data, "service", ""),
+            "service" => (string)(arr_get($data, "service", "") ?: Conf::get("app_name")),
             "env" => (string)arr_get($data, "env", Conf::get("env")),
             "ip" => (string)arr_get($data, "ip", ""),
             "call" => (string)arr_get($data, "call", ""),
@@ -63,18 +63,9 @@ class ErrorCenter
 
     protected static function send(string $data): void
     {
-
-        if (self::$stream == null) {
-            self::$stream = stream_socket_client("udp://log.stat.com:9823", $errno, $error);
-            if (!self::$stream) {
-                return;
-            }
-            // https://www.php.net/manual/zh/function.stream-set-blocking.php
-            stream_set_blocking(self::$stream, false);
-        }
         $str = self::pack($data);
-        if ($str && self::$stream) {
-            fwrite(self::$stream, $str);
+        if ($str) {
+            Client::send($str, "error.log.stat.com:9823");
         }
     }
 
@@ -86,7 +77,7 @@ class ErrorCenter
         $size = pack('N', $length);
 
         if ($length > 10235) {
-            Log::error("ErrorCenter 数据超出最大限制 $data");
+            Log::error("ErrorCenter 数据过长 $data");
             return "";
         }
 
