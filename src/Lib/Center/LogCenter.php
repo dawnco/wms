@@ -15,15 +15,15 @@ class LogCenter
     private static $stream = null;
 
     /**
-     * @param int    $timestamp  秒时间戳
-     * @param array  $data      格式 ["name"=>"jard","age"=>"25"]
      * @param string $store     那个store
+     * @param array  $data      格式 ["name"=>"jard","age"=>"25"]
+     * @param int    $timestamp 秒时间戳 默认当前秒
      * @return void
      */
     public static function record(
         string $store,
         array $data,
-        int $timestamp = 0,
+        int $timestamp = 0
     ): void {
 
         $kv = [];
@@ -37,7 +37,7 @@ class LogCenter
             "t" => $timestamp ?: time(), // 时间戳 秒
             "store" => $store, // 那个store
             "kv" => $kv
-        ]));
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     }
 
     protected static function send(string $data): void

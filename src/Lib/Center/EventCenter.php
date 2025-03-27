@@ -9,35 +9,38 @@ declare(strict_types=1);
 
 namespace Wms\Lib\Center;
 
+use Wms\Fw\Conf;
+
 class EventCenter
 {
 
     private static $stream = null;
 
     /**
-     * @param string $from      来自那个服务
      * @param string $name      事件名称
-     * @param int    $timestamp 毫秒时间戳
-     * @param string $requestId
      * @param array  $params    ["_topic_"=>"指定写入那个kafka的 topic 默认 空 表示 event-center"]
+     * @param string $requestId
+     * @param int    $timestamp 毫秒时间戳 默认 当前毫秒
+     * @param string $from      来自那个服务 默认取配置的  app_name
      * @return void
      */
     public static function app(
-        string $from,
         string $name,
-        int $timestamp,
+        array $params = [],
         string $requestId = "",
-        array $params = []
+        int $timestamp = 0,
+        string $topic = "",
+        string $from = ""
     ): void {
         self::send(json_encode([
-            "_topic_" => $params['_topic_'] ?? "",
-            "requestId" => $requestId,
             "name" => $name,
-            "from" => $from,
-            "country" => "id",
-            "timestamp" => $timestamp,
+            "_topic_" => $topic,
+            "requestId" => $requestId,
+            "from" => intval($from ?: Conf::get("app_name")),
+            "country" => Conf::get("app_country") ?: "",
+            "timestamp" => $timestamp ?: intval(microtime(true) * 1000),
             "params" => $params ?: null
-        ]));
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     }
 
     protected static function send(string $data): void
