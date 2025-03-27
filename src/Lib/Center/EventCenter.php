@@ -18,9 +18,10 @@ class EventCenter
 
     /**
      * @param string $name      事件名称
-     * @param array  $params    ["_topic_"=>"指定写入那个kafka的 topic 默认 空 表示 event-center"]
+     * @param array  $params    key的类型必须是字符串, value 类型任意 格式 ["key1"=>1, "key2"=>"value2"]
      * @param string $requestId
      * @param int    $timestamp 毫秒时间戳 默认 当前毫秒
+     * @param string $topic     指定写入那个kafka的
      * @param string $from      来自那个服务 默认取配置的  app_name
      * @return void
      */
@@ -36,8 +37,8 @@ class EventCenter
             "name" => $name,
             "_topic_" => $topic,
             "requestId" => $requestId,
-            "from" => intval($from ?: Conf::get("app_name")),
-            "country" => Conf::get("app_country") ?: "",
+            "from" => strval($from ?: Conf::get("app_name")),
+            "country" => strval(Conf::get("app_country") ?: ""),
             "timestamp" => $timestamp ?: intval(microtime(true) * 1000),
             "params" => $params ?: null
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));

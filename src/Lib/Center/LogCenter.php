@@ -16,7 +16,7 @@ class LogCenter
 
     /**
      * @param string $store     那个store
-     * @param array  $data      格式 ["name"=>"jard","age"=>"25"]
+     * @param array  $data       key和value的类型必须是字符串 格式 ["key"=>"value", "name"=>"jard", "age"=>"25"]
      * @param int    $timestamp 秒时间戳 默认当前秒
      * @return void
      */

@@ -17,7 +17,7 @@ class ErrorCenter
     private static $stream = null;
 
     /**
-     * @param array  $data      格式 查看 文档 
+     * @param array $data 格式 查看 文档
      * @return void
      */
     public static function record(array $data): void
@@ -36,24 +36,24 @@ class ErrorCenter
         $ms = arr_get($data, "t") ?: intval(microtime(true) * 1000);
         $p = [
             "t" => strval($ms),
-            "level" => arr_get($data, "level", "error"),
-            "requestId" => arr_get($data, "requestId", ""),
-            "date" => arr_get($data, "date") ?: date("Y-m-d", intval($ms / 1000)),
-            "service" => arr_get($data, "service", ""),
-            "env" => arr_get($data, "env", Conf::get("env")),
-            "ip" => arr_get($data, "ip", ""),
-            "call" => arr_get($data, "call", ""),
-            "duration" => arr_get($data, "duration", -1),
-            "path" => arr_get($data, "path", ""),
-            "status" => arr_get($data, "status", -1),
+            "level" => (string)arr_get($data, "level", "error"),
+            "requestId" => (string)arr_get($data, "requestId", ""),
+            "date" => (string)(arr_get($data, "date") ?: date("Y-m-d", intval($ms / 1000))),
+            "service" => (string)arr_get($data, "service", ""),
+            "env" => (string)arr_get($data, "env", Conf::get("env")),
+            "ip" => (string)arr_get($data, "ip", ""),
+            "call" => (string)arr_get($data, "call", ""),
+            "duration" => (int)arr_get($data, "duration", -1),
+            "path" => (string)arr_get($data, "path", ""),
+            "status" => (int)arr_get($data, "status", -1),
             "appId" => (int)arr_get($data, "appId", -1),
-            "keyword1" => arr_get($data, "keyword1", ""),
-            "keyword2" => arr_get($data, "keyword2", ""),
-            "keyword3" => arr_get($data, "keyword3", ""),
-            "msg" => arr_get($data, "msg", ""),
-            "context" => arr_get($data, "context", "{}"),
-            "file" => arr_get($data, "file", ""),
-            "line" => arr_get($data, "line", -1),
+            "keyword1" => (string)arr_get($data, "keyword1", ""),
+            "keyword2" => (string)arr_get($data, "keyword2", ""),
+            "keyword3" => (string)arr_get($data, "keyword3", ""),
+            "msg" => (string)arr_get($data, "msg", ""),
+            "context" => (string)arr_get($data, "context", "{}"),
+            "file" => (string)arr_get($data, "file", ""),
+            "line" => (int)arr_get($data, "line", -1),
         ];
 
         self::send(json_encode($p, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
