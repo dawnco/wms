@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Wms\Lib\Center;
 
 use Wms\Fw\Conf;
+use Wms\Fw\Log;
 
 class ErrorCenter
 {
@@ -85,6 +86,7 @@ class ErrorCenter
         $size = pack('N', $length);
 
         if ($length > 10235) {
+            Log::error("ErrorCenter 数据超出最大限制 $data");
             return "";
         }
 

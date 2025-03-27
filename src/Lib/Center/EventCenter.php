@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Wms\Lib\Center;
 
 use Wms\Fw\Conf;
+use Wms\Fw\Log;
 
 class EventCenter
 {
@@ -69,6 +70,7 @@ class EventCenter
         $size = pack('n', $length);
 
         if ($length > 10235) {
+            Log::error("EventCenter 数据超出最大限制 $data");
             return "";
         }
 

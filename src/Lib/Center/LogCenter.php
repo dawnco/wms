@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Wms\Lib\Center;
 
+use Wms\Fw\Log;
+
 class LogCenter
 {
 
@@ -16,7 +18,7 @@ class LogCenter
 
     /**
      * @param string $store     那个store
-     * @param array  $data       key和value的类型必须是字符串 格式 ["key"=>"value", "name"=>"jard", "age"=>"25"]
+     * @param array  $data      key和value的类型必须是字符串 格式 ["key"=>"value", "name"=>"jard", "age"=>"25"]
      * @param int    $timestamp 秒时间戳 默认当前秒
      * @return void
      */
@@ -65,6 +67,7 @@ class LogCenter
         $size = pack('N', $length);
 
         if ($length > 10235) {
+            Log::error("LogCenter 数据超出最大限制 $data");
             return "";
         }
 
