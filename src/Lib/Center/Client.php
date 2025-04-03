@@ -20,7 +20,7 @@ class Client
     {
 
         if (!isset(self::$client[$hostAndPort])) {
-            self::$client[$hostAndPort] = stream_socket_client("udp://$hostAndPort", $errno, $error);
+            self::$client[$hostAndPort] = @stream_socket_client("udp://$hostAndPort", $errno, $error);
             if (!self::$client[$hostAndPort]) {
                 Log::error("Center 初始化客户端错误 $hostAndPort $error");
                 return;
